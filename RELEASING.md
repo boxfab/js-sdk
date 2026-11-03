@@ -47,6 +47,10 @@ publishing (OIDC): there is no npm token in the repository or its secrets.
 
 ### First release by hand (only if trusted publishing cannot be set up before the package exists)
 
+0.1.0-alpha.1 was published this way (no provenance); 0.1.0-alpha.2 was the first release through
+the workflow. A new trusted publisher shows *Pending validation* on npmjs.com until the workflow
+publishes once, which must happen within npm's validation window (two days).
+
 Publish the tarball that CI built, not a local build:
 
 ```bash
