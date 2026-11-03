@@ -1,6 +1,6 @@
 {
   "name": "boxfab",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "BoxFab SDK: secure cloud sandboxes for AI agents and code execution",
   "homepage": "https://boxfab.dev",
   "license": "MIT",
@@ -10,12 +10,27 @@
     "url": "git+https://github.com/boxfab/js-sdk.git"
   },
   "bugs": "https://github.com/boxfab/js-sdk/issues",
-  "keywords": ["boxfab", "sandbox", "ai-agents", "agents", "ai", "code-interpreter", "vm", "typescript"],
+  "keywords": [
+    "boxfab",
+    "sandbox",
+    "ai-agents",
+    "agents",
+    "ai",
+    "code-interpreter",
+    "vm",
+    "typescript"
+  ],
   "sideEffects": false,
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
-  "files": ["dist", "LICENSE", "LICENSE-E2B", "README.md", "package.json"],
+  "files": [
+    "dist",
+    "LICENSE",
+    "LICENSE-E2B",
+    "README.md",
+    "package.json"
+  ],
   "scripts": {
     "sync-upstream": "python3 scripts/sync_upstream.py",
     "build": "tsc --noEmit && tsdown",
@@ -51,7 +66,9 @@
   "engines": {
     "node": ">=22.19.0"
   },
-  "browserslist": ["defaults"],
+  "browserslist": [
+    "defaults"
+  ],
   "publishConfig": {
     "access": "public",
     "provenance": true

@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.1.0-alpha.1 (unreleased)
+## 0.1.0-alpha.2 (2026-11-03)
+
+- First release published by the GitHub Actions workflow (npm trusted publishing, with
+  provenance). No code changes from 0.1.0-alpha.1.
+
+## 0.1.0-alpha.1 (2026-11-03)
 
 First BoxFab release, derived from the E2B JavaScript SDK `e2b` 2.61.0 (see `UPSTREAM.md`).
 
