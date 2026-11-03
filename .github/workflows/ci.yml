@@ -1,0 +1,106 @@
+name: CI
+
+# Runs on pull requests and pushes to main, and is called by publish.yml on the exact release
+# commit. Its `build` job produces the only package tarball that publish.yml ever uploads.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+    secrets:
+      DIST_EXTRA_DENY:
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "22.19.0"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --ignore-scripts
+      - name: Type check
+        run: npm run typecheck
+      - name: Build (tests/bundle checks the built output)
+        run: npm run build
+      - name: Unit tests (offline; the live project needs a key and is run as described in UPSTREAM.md)
+        run: npm test
+      - name: Release tag check rejects malformed tags
+        run: |
+          v=$(node -p "require('./package.json').version")
+          node scripts/check_release_tag.mjs "v$v"
+          for bad in "$v" "v$v-x" "V$v" "v1.0.0-preview.1" "v1.0.0-alpha" "v1.0.0-rc.1+build"; do
+            if node scripts/check_release_tag.mjs "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
+          done
+
+  generated-code-is-in-sync:
+    # src/, tests/ and the configs must be exactly what scripts/sync_upstream.py produces.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python scripts/sync_upstream.py
+      - name: No changed or untracked files after the sync
+        run: |
+          git status --porcelain
+          git diff --stat
+          test -z "$(git status --porcelain)"
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: mkdir pkg && npm pack --ignore-scripts --pack-destination pkg
+      - name: Package contents, metadata, local paths, credentials
+        env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: node scripts/check_package.mjs pkg/*.tgz
+      - name: Install the tarball in an empty project and check the defaults
+        run: scripts/smoke_installed.sh pkg/*.tgz
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package
+          path: pkg/
+          if-no-files-found: error
+          retention-days: 90
+
+  artifact-roundtrip:
+    # Downloads the build artifact with the same action publish.yml uses and re-checks it.
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package
+          path: pkg/
+      - env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: node scripts/check_package.mjs pkg/*.tgz

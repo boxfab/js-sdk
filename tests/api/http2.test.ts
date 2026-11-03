@@ -1,0 +1,192 @@
+import { afterEach, expect, test, vi } from 'vitest'
+
+afterEach(() => {
+  vi.restoreAllMocks()
+  vi.resetModules()
+  delete process.env.BOXFAB_API_CONNECTIONS
+})
+
+test('uses undici with a bounded HTTP/2 dispatcher for API requests', async () => {
+  const agents: Array<{ allowH2?: boolean; connections?: number }> = []
+  const requests: Array<{ init?: RequestInit & { dispatcher?: unknown } }> = []
+
+  class Agent {
+    constructor(options: { allowH2?: boolean; connections?: number }) {
+      agents.push(options)
+    }
+  }
+
+  const undiciFetch = vi.fn((input, init) => {
+    requests.push({ init })
+    return Promise.resolve(new Response('ok'))
+  })
+  const loadUndici = vi.fn(() => Promise.resolve({ Agent, fetch: undiciFetch }))
+
+  const { createApiFetchForRuntime } = await import('../../src/api/http2')
+
+  const fetcher = createApiFetchForRuntime('node', {
+    connectionLimit: 100,
+    loadUndici,
+  })
+  await fetcher('https://example.com/sandboxes')
+
+  expect(loadUndici).toHaveBeenCalledOnce()
+  expect(agents).toEqual([{ allowH2: true, connections: 100 }])
+  expect(requests[0].init?.dispatcher).toBeInstanceOf(Agent)
+})
+
+test('uses a ProxyAgent dispatcher when a proxy is configured', async () => {
+  const proxyAgents: Array<{
+    uri?: string
+    allowH2?: boolean
+    connections?: number
+  }> = []
+  const agents: Array<unknown> = []
+  const requests: Array<{ init?: RequestInit & { dispatcher?: unknown } }> = []
+
+  class Agent {
+    constructor() {
+      agents.push(this)
+    }
+  }
+
+  class ProxyAgent {
+    constructor(options: {
+      uri?: string
+      allowH2?: boolean
+      connections?: number
+      proxyTunnel?: boolean
+    }) {
+      proxyAgents.push(options)
+    }
+  }
+
+  const undiciFetch = vi.fn((input, init) => {
+    requests.push({ init })
+    return Promise.resolve(new Response('ok'))
+  })
+  const loadUndici = vi.fn(() =>
+    Promise.resolve({ Agent, ProxyAgent, fetch: undiciFetch })
+  )
+
+  const { createApiFetchForRuntime } = await import('../../src/api/http2')
+
+  const fetcher = createApiFetchForRuntime('node', {
+    connectionLimit: 100,
+    proxy: 'http://user:pass@127.0.0.1:8080',
+    loadUndici,
+  })
+  await fetcher('https://example.com/sandboxes')
+
+  expect(agents).toHaveLength(0)
+  expect(proxyAgents).toEqual([
+    {
+      uri: 'http://user:pass@127.0.0.1:8080',
+      allowH2: true,
+      connections: 100,
+      proxyTunnel: true,
+    },
+  ])
+  expect(requests[0].init?.dispatcher).toBeInstanceOf(ProxyAgent)
+})
+
+test('retries the fetcher build after a failed load instead of caching the rejection', async () => {
+  const Agent = vi.fn()
+  const undiciFetch = vi.fn(() => Promise.resolve(new Response('ok')))
+  const loadUndici = vi
+    .fn<() => Promise<unknown>>()
+    .mockRejectedValueOnce(new Error('transient import failure'))
+    .mockResolvedValue({ Agent, fetch: undiciFetch })
+
+  const { createApiFetchForRuntime } = await import('../../src/api/http2')
+
+  const fetcher = createApiFetchForRuntime('node', {
+    connectionLimit: 1,
+    loadUndici: loadUndici as never,
+  })
+
+  await expect(fetcher('https://example.com/sandboxes')).rejects.toThrow(
+    'transient import failure'
+  )
+
+  const res = await fetcher('https://example.com/sandboxes')
+  expect(await res.text()).toBe('ok')
+  expect(loadUndici).toHaveBeenCalledTimes(2)
+})
+
+test('late-binds the global fetch fallback when undici cannot be loaded', async () => {
+  const { createApiFetchForRuntime } = await import('../../src/api/http2')
+
+  const fetcher = createApiFetchForRuntime('node', {
+    loadUndici: () => Promise.resolve(undefined),
+  })
+
+  const firstFetch = vi.fn(() => Promise.resolve(new Response('first')))
+  vi.stubGlobal('fetch', firstFetch)
+  try {
+    expect(await (await fetcher('https://example.com/sandboxes')).text()).toBe(
+      'first'
+    )
+
+    // A fetch swapped in after the fallback was built (msw, instrumentation)
+    // must still be picked up.
+    const secondFetch = vi.fn(() => Promise.resolve(new Response('second')))
+    vi.stubGlobal('fetch', secondFetch)
+
+    expect(await (await fetcher('https://example.com/sandboxes')).text()).toBe(
+      'second'
+    )
+    expect(firstFetch).toHaveBeenCalledOnce()
+    expect(secondFetch).toHaveBeenCalledOnce()
+  } finally {
+    vi.unstubAllGlobals()
+  }
+})
+
+test('pins the API dispatcher to HTTP/1.1 when httpVersion is http1', async () => {
+  const agents: Array<{ allowH2?: boolean; connections?: number }> = []
+
+  class Agent {
+    constructor(options: { allowH2?: boolean; connections?: number }) {
+      agents.push(options)
+    }
+  }
+
+  const undiciFetch = vi.fn(() => Promise.resolve(new Response('ok')))
+
+  const { createApiFetchForRuntime } = await import('../../src/api/http2')
+
+  const fetcher = createApiFetchForRuntime('node', {
+    connectionLimit: 3,
+    httpVersion: '1.1',
+    loadUndici: () => Promise.resolve({ Agent, fetch: undiciFetch }),
+  })
+  await fetcher('https://api.e2b.app/sandboxes')
+
+  expect(agents).toEqual([{ allowH2: false, connections: 3 }])
+})
+
+test('caches API fetchers per proxy and HTTP version', async () => {
+  const { createApiFetch } = await import('../../src/api/http2')
+
+  const noProxy = createApiFetch()
+  const proxyA = createApiFetch({ proxy: 'http://127.0.0.1:8080' })
+  const proxyB = createApiFetch({ proxy: 'http://127.0.0.1:9090' })
+  const noProxyH1 = createApiFetch({ httpVersion: '1.1' })
+
+  expect(createApiFetch()).toBe(noProxy)
+  expect(createApiFetch({ httpVersion: '2' })).toBe(noProxy)
+  expect(createApiFetch({ proxy: 'http://127.0.0.1:8080' })).toBe(proxyA)
+  expect(createApiFetch({ httpVersion: '1.1' })).toBe(noProxyH1)
+  expect(proxyA).not.toBe(noProxy)
+  expect(proxyA).not.toBe(proxyB)
+  expect(noProxyH1).not.toBe(noProxy)
+})
+
+test('getApiConnectionLimit throws on a malformed env value', async () => {
+  process.env.BOXFAB_API_CONNECTIONS = 'not-a-number'
+
+  const { getApiConnectionLimit } = await import('../../src/api/http2')
+
+  expect(() => getApiConnectionLimit()).toThrow(/BOXFAB_API_CONNECTIONS/)
+})

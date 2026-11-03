@@ -1,0 +1,154 @@
+import createClient from 'openapi-fetch'
+
+import type { components, paths } from './schema.gen'
+import { defaultHeaders, getEnvVar } from '../api/metadata'
+import { createApiFetch } from '../api/http2'
+import {
+  buildRequestSignal,
+  HttpVersion,
+  REQUEST_TIMEOUT_MS,
+  resolveHttpVersion,
+} from '../connectionConfig'
+import { createApiLogger, Logger } from '../logs'
+import type { Volume } from './index'
+
+const FILE_TIMEOUT_MS = 3_600_000 // 1 hour
+
+export interface VolumeApiOpts {
+  /**
+   * BoxFab API key to use for authentication.
+   *
+   * @default BOXFAB_API_KEY // environment variable
+   */
+  token?: string
+  /**
+   * Domain to use for the volume API.
+   *
+   * @default BOXFAB_DOMAIN // environment variable or `boxfab.io`
+   */
+  domain?: string
+  /**
+   * If true the SDK starts in the debug mode and connects to the local volume API server.
+   * @internal
+   * @default BOXFAB_DEBUG // environment variable or `false`
+   */
+  debug?: boolean
+  /**
+   * API Url to use for the API.
+   * @internal
+   * @default BOXFAB_VOLUME_API_URL // environment variable or `https://api.${domain}`
+   */
+  apiUrl?: string
+  /**
+   * Timeout for requests to the API in **milliseconds**.
+   *
+   * @default 60_000 // 60 seconds
+   */
+  requestTimeoutMs?: number
+  /**
+   * Logger to use for logging messages. It can accept any object that implements `Logger` interface—for example, {@link console}.
+   */
+  logger?: Logger
+
+  /**
+   * Additional headers to send with the request.
+   */
+  headers?: Record<string, string>
+
+  /**
+   * Proxy URL to use for requests.
+   *
+   * @example 'http://user:pass@127.0.0.1:8080'
+   */
+  proxy?: string
+
+  /**
+   * HTTP version for requests to the volume content API: `'1.1'` or `'2'`.
+   *
+   * @default BOXFAB_HTTP_VERSION // environment variable or `'2'`
+   */
+  httpVersion?: HttpVersion
+
+  /**
+   * An optional `AbortSignal` that can be used to cancel the in-flight request.
+   * When the signal is aborted, the underlying `fetch` is aborted and the
+   * returned promise rejects with an `AbortError`.
+   */
+  signal?: AbortSignal
+}
+
+export class VolumeConnectionConfig {
+  readonly domain: string
+  readonly debug: boolean
+  readonly apiUrl: string
+  readonly token?: string
+  readonly headers?: Record<string, string>
+  readonly logger?: Logger
+  readonly requestTimeoutMs: number
+  readonly signal?: AbortSignal
+  readonly proxy?: string
+  readonly httpVersion: HttpVersion
+
+  constructor(volume: Volume, opts?: VolumeApiOpts) {
+    this.domain = opts?.domain || volume.domain || VolumeConnectionConfig.domain
+    this.debug = opts?.debug ?? volume.debug ?? VolumeConnectionConfig.debug
+    this.apiUrl =
+      opts?.apiUrl ||
+      VolumeConnectionConfig.volumeApiUrl ||
+      (this.debug ? 'http://localhost:8080' : `https://api.${this.domain}`)
+    this.token = opts?.token || volume.token
+    this.headers = opts?.headers
+    this.logger = opts?.logger
+    this.requestTimeoutMs = opts?.requestTimeoutMs ?? REQUEST_TIMEOUT_MS
+    this.signal = opts?.signal
+    this.proxy = opts?.proxy || volume.proxy
+    this.httpVersion = resolveHttpVersion(
+      opts?.httpVersion ?? volume.httpVersion
+    )
+  }
+
+  private static get domain() {
+    return getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'
+  }
+
+  private static get debug() {
+    return (getEnvVar('BOXFAB_DEBUG') || 'false').toLowerCase() === 'true'
+  }
+
+  private static get volumeApiUrl() {
+    return getEnvVar('BOXFAB_VOLUME_API_URL')
+  }
+
+  getSignal(requestTimeoutMs?: number, signal?: AbortSignal) {
+    return buildRequestSignal(
+      requestTimeoutMs ?? this.requestTimeoutMs,
+      signal ?? this.signal
+    )
+  }
+}
+
+/**
+ * Client for interacting with the BoxFab Volume API.
+ */
+class VolumeApiClient {
+  readonly api: ReturnType<typeof createClient<paths>>
+
+  constructor(config: VolumeConnectionConfig) {
+    this.api = createClient<paths>({
+      baseUrl: config.apiUrl,
+      fetch: createApiFetch(config),
+      headers: {
+        ...defaultHeaders,
+        ...(config.token && { Authorization: `Bearer ${config.token}` }),
+        ...config.headers,
+      },
+    })
+
+    if (config.logger) {
+      this.api.use(createApiLogger(config.logger))
+    }
+  }
+}
+
+export type { components as VolumeApiComponents, paths as VolumeApiPaths }
+export { VolumeApiClient, FILE_TIMEOUT_MS }

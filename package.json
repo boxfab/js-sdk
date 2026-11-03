@@ -1,0 +1,59 @@
+{
+  "name": "boxfab",
+  "version": "0.1.0-alpha.1",
+  "description": "BoxFab SDK: secure cloud sandboxes for AI agents and code execution",
+  "homepage": "https://boxfab.dev",
+  "license": "MIT",
+  "author": "ContextFab, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boxfab/js-sdk.git"
+  },
+  "bugs": "https://github.com/boxfab/js-sdk/issues",
+  "keywords": ["boxfab", "sandbox", "ai-agents", "agents", "ai", "code-interpreter", "vm", "typescript"],
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "LICENSE", "LICENSE-E2B", "README.md", "package.json"],
+  "scripts": {
+    "sync-upstream": "python3 scripts/sync_upstream.py",
+    "build": "tsc --noEmit && tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --project unit-offline --project connectionConfig",
+    "test:live": "vitest run --project live",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.16.0",
+    "@connectrpc/connect": "^2.2.0",
+    "@connectrpc/connect-web": "^2.2.0",
+    "@e2b/dockerfile-utils": "^0.1.1",
+    "chalk": "^5.6.2",
+    "compare-versions": "^6.1.1",
+    "glob": "^13.0.6",
+    "openapi-fetch": "^0.17.0",
+    "platform": "^1.3.6",
+    "tar": "^7.5.22",
+    "undici": "^8.12.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/platform": "^1.3.6",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "dotenv": "^16.6.1",
+    "error-stack-parser-es": "^2.0.1",
+    "msw": "^2.15.0",
+    "tsdown": "^0.22.14",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^4.1.12"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "browserslist": ["defaults"],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
