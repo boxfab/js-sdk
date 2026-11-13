@@ -27,7 +27,7 @@ DOCS = "https://boxfab.dev/docs"
 DASHBOARD = "https://dashboard.boxfab.io"
 
 COPY = ["src", "tests"]
-RENAME = {"LICENSE": "LICENSE-E2B", "CHANGELOG.md": "CHANGELOG-E2B.md"}
+RENAME = {"CHANGELOG.md": "CHANGELOG-E2B.md"}
 # Runtime smoke suites for browsers, Cloudflare Workers, Bun and Deno: they need their own
 # toolchains and deploy targets and are not run here.
 DELETE_DIRS = ["tests/runtimes"]
@@ -132,6 +132,15 @@ def main():
             shutil.copytree(sdk / name, dst)
         for old, new in RENAME.items():
             shutil.copy2(sdk / old, ROOT / new)
+        # LICENSE is MIT with upstream's copyright line and ours; it must keep upstream's
+        # copyright line and permission text word for word.
+        up_lic = (sdk / "LICENSE").read_text()
+        ours = (ROOT / "LICENSE").read_text()
+        up_copyright = [line for line in up_lic.splitlines() if line.startswith("Copyright")]
+        if not up_copyright or any(line not in ours.splitlines() for line in up_copyright):
+            sys.exit(f"LICENSE lacks upstream's copyright line(s): {up_copyright}")
+        if not ours.endswith(up_lic[up_lic.index("Permission is hereby granted"):]):
+            sys.exit("LICENSE permission text differs from upstream's")
 
     for rel in DELETE_DIRS:
         p = ROOT / rel
