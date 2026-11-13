@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- One `LICENSE` file: the MIT text with the upstream copyright line (FOUNDRYLABS, INC.) and
+  ContextFab's; `LICENSE-E2B` is merged into it.
+- README: "Under the hood" section (Firecracker, the E2B open-source infrastructure and SDK, and how
+  to use the E2B SDKs with BoxFab); the License section names the upstream SDK.
+
 ## 0.1.0-alpha.2 (2026-11-03)
 
 - First release published by the GitHub Actions workflow (npm trusted publishing, with
