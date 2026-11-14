@@ -17,10 +17,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: npm-publish
-  cancel-in-progress: false
-
 jobs:
   verify:
     # Releases of the core package (v* tags) go through publish.yml.
@@ -58,6 +54,11 @@ jobs:
 
   publish:
     needs: ci
+    # One upload at a time across both publish workflows, never cancelled. Set on this job only, so
+    # a run that skips (a tag for the other package) never waits in the queue.
+    concurrency:
+      group: npm-publish
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
