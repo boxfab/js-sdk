@@ -20,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from sync_desktop import sync as sync_desktop  # noqa: E402
+from sync_code_interpreter import sync as sync_code_interpreter  # noqa: E402
 UPSTREAM_REPO = "https://github.com/e2b-dev/E2B.git"
 UPSTREAM_TAG = "e2b@2.61.0"
 UPSTREAM_COMMIT = "ee355b765ac0e884fbeaa69e4b44f4c7c58ed6b1"
@@ -144,6 +145,7 @@ def main():
         if not ours.endswith(up_lic[up_lic.index("Permission is hereby granted"):]):
             sys.exit("LICENSE permission text differs from upstream's")
         sync_desktop(src)  # desktop/ from the same checkout (scripts/sync_desktop.py)
+        sync_code_interpreter(src)  # code-interpreter/ (scripts/sync_code_interpreter.py)
 
     for rel in DELETE_DIRS:
         p = ROOT / rel

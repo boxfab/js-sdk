@@ -50,7 +50,8 @@ for (const f of files) {
 }
 
 // The defaults users get: BoxFab domain and variable names, no E2B dashboard or docs links. The
-// desktop package imports the core `boxfab` package, which carries those defaults.
+// desktop and code-interpreter packages import the core `boxfab` package, which carries those
+// defaults.
 for (const f of project ? [] : ['package/dist/index.js', 'package/dist/index.mjs']) {
   const js = read(f)
   if (!js.includes("getEnvVar(\"BOXFAB_DOMAIN\") || \"boxfab.io\"") && !js.includes("getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'")) problems.push(`${f}: default domain is not boxfab.io`)
