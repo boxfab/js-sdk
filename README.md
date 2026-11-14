@@ -35,6 +35,17 @@ binds its own configuration: `new BoxFab({ apiKey }).Sandbox.create()`.
 Documentation: [boxfab.dev/docs](https://boxfab.dev/docs). Dashboard:
 [dashboard.boxfab.io](https://dashboard.boxfab.io).
 
+## Desktop sandboxes
+
+`@boxfab/desktop` (in [desktop/](desktop)) adds a virtual Linux desktop for computer-use agents:
+mouse and keyboard control, screenshots, application windows, and a live stream of the screen.
+
+```bash
+npm install @boxfab/desktop
+```
+
+See [desktop/README.md](desktop/README.md).
+
 ## Under the hood
 
 BoxFab sandboxes are [Firecracker](https://firecracker-microvm.github.io/) microVMs, run on the

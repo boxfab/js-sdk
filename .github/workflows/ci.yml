@@ -44,8 +44,53 @@ jobs:
             if node scripts/check_release_tag.mjs "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
           done
 
+  desktop:
+    # The @boxfab/desktop package in desktop/: type check, offline tests, build, package checks,
+    # clean install. Its `desktop-package` artifact is what publish-desktop.yml uploads.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: npm ci --ignore-scripts
+      - name: Type check
+        run: npm run typecheck
+      - name: Unit tests (offline; the live tests need a key, see live.yml)
+        run: npm test
+      - name: Release tag check
+        working-directory: .
+        run: |
+          v=$(node -p "require('./desktop/package.json').version")
+          node scripts/check_release_tag.mjs --project desktop "desktop-v$v"
+          for bad in "v$v" "desktop-$v" "desktop-v$v-x"; do
+            if node scripts/check_release_tag.mjs --project desktop "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
+          done
+      - run: npm run build
+      - run: mkdir pkg && npm pack --ignore-scripts --pack-destination pkg
+      - name: Package contents, metadata, local paths, credentials
+        working-directory: .
+        env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: node scripts/check_package.mjs --project desktop desktop/pkg/*.tgz
+      - name: Install the tarball in an empty project (core SDK from npm) and check the defaults
+        working-directory: .
+        run: scripts/smoke_desktop.sh desktop/pkg/*.tgz
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: desktop-package
+          path: desktop/pkg/
+          if-no-files-found: error
+          retention-days: 90
+
   generated-code-is-in-sync:
-    # src/, tests/ and the configs must be exactly what scripts/sync_upstream.py produces.
+    # src/, tests/, the configs and desktop/ must be exactly what scripts/sync_upstream.py produces.
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

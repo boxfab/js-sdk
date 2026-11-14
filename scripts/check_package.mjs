@@ -5,8 +5,10 @@
 import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 
-const tgz = process.argv[2]
-const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+const args = process.argv.slice(2)
+const project = args[0] === '--project' ? args[1] : ''
+const tgz = project ? args[2] : args[0]
+const pkg = JSON.parse(readFileSync(new URL(`../${project ? project + '/' : ''}package.json`, import.meta.url), 'utf8'))
 const problems = []
 
 const files = execFileSync('tar', ['-tzf', tgz], { encoding: 'utf8' }).trim().split('\n').sort()
@@ -27,7 +29,7 @@ if (JSON.stringify(files) !== JSON.stringify(expected)) {
 
 const read = (f) => execFileSync('tar', ['-xzOf', tgz, f], { maxBuffer: 64 << 20 }).toString('utf8')
 const meta = JSON.parse(read('package/package.json'))
-for (const [k, v] of [['name', 'boxfab'], ['version', pkg.version], ['license', 'MIT'], ['main', 'dist/index.js'], ['module', 'dist/index.mjs'], ['types', 'dist/index.d.ts']]) {
+for (const [k, v] of [['name', pkg.name], ['version', pkg.version], ['license', 'MIT'], ['main', 'dist/index.js'], ['module', 'dist/index.mjs'], ['types', 'dist/index.d.ts']]) {
   if (meta[k] !== v) problems.push(`package.json ${k} is ${meta[k]}, expected ${v}`)
 }
 if (meta.scripts?.postinstall || meta.scripts?.install || meta.scripts?.preinstall) problems.push('package.json has install scripts')
@@ -47,8 +49,9 @@ for (const f of files) {
   }
 }
 
-// The defaults users get: BoxFab domain and variable names, no E2B dashboard or docs links.
-for (const f of ['package/dist/index.js', 'package/dist/index.mjs']) {
+// The defaults users get: BoxFab domain and variable names, no E2B dashboard or docs links. The
+// desktop package imports the core `boxfab` package, which carries those defaults.
+for (const f of project ? [] : ['package/dist/index.js', 'package/dist/index.mjs']) {
   const js = read(f)
   if (!js.includes("getEnvVar(\"BOXFAB_DOMAIN\") || \"boxfab.io\"") && !js.includes("getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'")) problems.push(`${f}: default domain is not boxfab.io`)
   for (const rx of [/getEnvVar\(["']E2B_/, /e2b\.dev\/(docs|dashboard)/, /e2b-js-sdk\//]) {

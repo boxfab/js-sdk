@@ -3,3 +3,6 @@ dist/
 pkg/
 .env
 *.tgz
+
+# Python bytecode from scripts/
+__pycache__/

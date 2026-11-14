@@ -18,6 +18,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+from sync_desktop import sync as sync_desktop  # noqa: E402
 UPSTREAM_REPO = "https://github.com/e2b-dev/E2B.git"
 UPSTREAM_TAG = "e2b@2.61.0"
 UPSTREAM_COMMIT = "ee355b765ac0e884fbeaa69e4b44f4c7c58ed6b1"
@@ -141,6 +143,7 @@ def main():
             sys.exit(f"LICENSE lacks upstream's copyright line(s): {up_copyright}")
         if not ours.endswith(up_lic[up_lic.index("Permission is hereby granted"):]):
             sys.exit("LICENSE permission text differs from upstream's")
+        sync_desktop(src)  # desktop/ from the same checkout (scripts/sync_desktop.py)
 
     for rel in DELETE_DIRS:
         p = ROOT / rel
