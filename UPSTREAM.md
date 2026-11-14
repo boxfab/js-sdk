@@ -60,6 +60,18 @@ own; `desktop/LICENSE` is a copy of `LICENSE`.
 | client class `E2B` → `BoxFab`, `E2BClientOpts` → `BoxFabClientOpts` (old names exported as aliases) | as in the core SDK |
 | live tests take the template from `BOXFAB_DESKTOP_TEMPLATE` (default: the SDK's `desktop`) | test a template build before it becomes the default |
 
+### Known upstream issues (not changed here)
+
+The generated code keeps upstream's behaviour, including these issues found in review. They are
+listed so users can work around them; they will be fixed upstream or by an explicit sync rule.
+
+- **Zero coordinates in clicks** (`leftClick`, `doubleClick`, `rightClick`, `middleClick`): the
+  mouse is moved only `if (x && y)`, so a coordinate of `0` (a screen edge) clicks at the previous
+  cursor position. Work-around: call `moveMouse(x, y)` first, then the click without coordinates.
+- **`display` with the options-only `Sandbox.create(opts)`**: the display is read from the second
+  argument only, so `Sandbox.create({ display: ':1' })` starts on `:0`. Work-around: pass the
+  template too, `Sandbox.create('desktop', { display: ':1' })`.
+
 The desktop sandbox template itself is in [boxfab/desktop](https://github.com/boxfab/desktop)
 (generated from `e2b-dev/desktop`).
 
