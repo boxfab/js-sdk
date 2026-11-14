@@ -6,3 +6,7 @@ pkg/
 
 # Python bytecode from scripts/
 __pycache__/
+
+# Notes for AI agents and reviewers, kept locally
+AGENTS.md
+CLAUDE.md
