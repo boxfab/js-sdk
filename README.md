@@ -35,6 +35,18 @@ binds its own configuration: `new BoxFab({ apiKey }).Sandbox.create()`.
 Documentation: [boxfab.dev/docs](https://boxfab.dev/docs). Dashboard:
 [dashboard.boxfab.io](https://dashboard.boxfab.io).
 
+## Code interpreting
+
+`@boxfab/code-interpreter` (in [code-interpreter/](code-interpreter)) runs AI-generated code in a
+Jupyter-style sandbox: Python, JavaScript, TypeScript, R, Java and Bash, with text, tables and
+charts returned as data.
+
+```bash
+npm install @boxfab/code-interpreter
+```
+
+See [code-interpreter/README.md](code-interpreter/README.md).
+
 ## Desktop sandboxes
 
 `@boxfab/desktop` (in [desktop/](desktop)) adds a virtual Linux desktop for computer-use agents:

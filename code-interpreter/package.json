@@ -1,0 +1,61 @@
+{
+  "name": "@boxfab/code-interpreter",
+  "version": "0.1.0-alpha.1",
+  "description": "BoxFab Code Interpreter: run AI-generated code in BoxFab sandboxes, Jupyter-style",
+  "homepage": "https://boxfab.io",
+  "license": "MIT",
+  "author": "ContextFab, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boxfab/js-sdk.git",
+    "directory": "code-interpreter"
+  },
+  "bugs": "https://github.com/boxfab/js-sdk/issues",
+  "keywords": [
+    "boxfab",
+    "code-interpreter",
+    "stateful-sandbox",
+    "sandbox",
+    "ai-agents",
+    "agents",
+    "ai",
+    "vm"
+  ],
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && tsdown",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --project unit-offline",
+    "test:live": "vitest run --project live",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "boxfab": "^0.1.0-alpha.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "dotenv": "^16.6.1",
+    "tsdown": "^0.22.14",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^4.1.12"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "browserslist": [
+    "defaults"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

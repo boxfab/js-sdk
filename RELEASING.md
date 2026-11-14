@@ -81,3 +81,13 @@ CI on the tagged commit; the `npm` environment's approval; trusted publishing wi
 - Release: set `version` in `desktop/package.json` (and `desktop/package-lock.json`) and add the
   `desktop/CHANGELOG.md` entry (PR, green CI, squash-merge), then publish a GitHub Release with tag
   `desktop-v<version>` (pre-release for alpha/beta/rc), and approve the `npm` deployment.
+
+## Releasing @boxfab/code-interpreter
+
+The same as @boxfab/desktop, with tags `code-interpreter-v<version>`, the version in
+`code-interpreter/package.json` (and `code-interpreter/package-lock.json`), the changelog
+`code-interpreter/CHANGELOG.md`, the CI artifact `code-interpreter-package` and the workflow
+`.github/workflows/publish-code-interpreter.yml`. One-time setup: publish `0.1.0-alpha.1` by hand
+from the CI tarball if npmjs.com offers trusted publishing only for an existing package, then add
+the trusted publisher: organization `boxfab`, repository `js-sdk`, workflow
+`publish-code-interpreter.yml`, environment `npm`.

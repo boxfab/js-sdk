@@ -1,5 +1,7 @@
 // Usage: node scripts/check_release_tag.mjs v0.1.0-alpha.1                            (boxfab)
 //        node scripts/check_release_tag.mjs --project desktop desktop-v0.1.0-alpha.1  (@boxfab/desktop)
+//        node scripts/check_release_tag.mjs --project code-interpreter code-interpreter-v0.1.0-alpha.1
+//                                                              (@boxfab/code-interpreter)
 // Exits non-zero unless the tag is exactly "v" + the version in package.json, and that version is
 // MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-(alpha|beta|rc).N (the pre-release name is the npm
 // dist-tag publish.yml uses).
