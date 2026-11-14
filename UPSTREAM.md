@@ -44,6 +44,25 @@ Deliberately unchanged:
   protocol or third-party names, not branding.
 - The dependency `@e2b/dockerfile-utils` (published on npm by E2B) is used as is.
 
+## Desktop package (`desktop/`, `@boxfab/desktop`)
+
+Generated in the same sync run, from the same monorepo commit, by `scripts/sync_desktop.py`:
+`packages/desktop-js` (`@e2b/desktop` 2.5.0 at that commit) → `desktop/src`, `desktop/tests`
+(without the Cloudflare Workers suite), `desktop/CHANGELOG-E2B.md`, and `desktop/README.md` (our
+introduction from `scripts/desktop/`, then upstream's README from "3. Create Desktop Sandbox" on).
+`desktop/package.json`, the build and test configs and `desktop/CHANGELOG.md` are this repository's
+own; `desktop/LICENSE` is a copy of `LICENSE`.
+
+| Change | Why |
+|---|---|
+| imports of `e2b` → `boxfab` | the core SDK is `boxfab` |
+| `E2B_*` variables read by the package and its tests → `BOXFAB_*` | as in the core SDK |
+| client class `E2B` → `BoxFab`, `E2BClientOpts` → `BoxFabClientOpts` (old names exported as aliases) | as in the core SDK |
+| live tests take the template from `BOXFAB_DESKTOP_TEMPLATE` (default: the SDK's `desktop`) | test a template build before it becomes the default |
+
+The desktop sandbox template itself is in [boxfab/desktop](https://github.com/boxfab/desktop)
+(generated from `e2b-dev/desktop`).
+
 ## Verification (2026-11-03)
 
 - Offline: upstream unit and config tests, 478 pass (3 skipped by upstream), with `E2B_*` set to

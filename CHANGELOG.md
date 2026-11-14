@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- New package `@boxfab/desktop` in `desktop/` (virtual Linux desktop for computer-use agents),
+  generated in the same sync run as `boxfab`; released separately with `desktop-v*` tags through
+  `publish-desktop.yml`. CI job `desktop`.
+
 ## 0.1.0-alpha.3 (2026-11-13)
 
 - One `LICENSE` file: the MIT text with the upstream copyright line (FOUNDRYLABS, INC.) and

@@ -66,3 +66,18 @@ npm publish ./pkg/*.tgz --access public --tag alpha --provenance=false
 `package.json` asks for provenance, which only CI can produce, hence `--provenance=false` for
 this one manual release. npm also sets `latest` on a package's first publish; later pre-releases
 move only their own dist-tag.
+
+## Releasing @boxfab/desktop
+
+The desktop package (`desktop/`) has its own version and its own workflow,
+`.github/workflows/publish-desktop.yml`, which acts only on tags `desktop-v<version>`
+(`publish.yml` acts only on `v<version>`). The same protections apply: admin-only, immutable tags;
+CI on the tagged commit; the `npm` environment's approval; trusted publishing with provenance.
+
+- One-time setup: `@boxfab/desktop` does not exist on npm yet. If npmjs.com only offers trusted
+  publishing for an existing package, publish `0.1.0-alpha.1` by hand from the CI tarball (as
+  described above, with `desktop-package` instead of `package`), then add the trusted publisher:
+  organization `boxfab`, repository `js-sdk`, workflow `publish-desktop.yml`, environment `npm`.
+- Release: set `version` in `desktop/package.json` (and `desktop/package-lock.json`) and add the
+  `desktop/CHANGELOG.md` entry (PR, green CI, squash-merge), then publish a GitHub Release with tag
+  `desktop-v<version>` (pre-release for alpha/beta/rc), and approve the `npm` deployment.
