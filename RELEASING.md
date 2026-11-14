@@ -15,7 +15,7 @@ publishing (OIDC): there is no npm token in the repository or its secrets.
 | dist-tag from the version: `1.2.3` → `latest`, `-alpha.N` → `alpha`, `-beta.N` → `beta`, `-rc.N` → `rc`; any other pre-release name is rejected | `scripts/check_release_tag.mjs` (job `verify`) and `publish.yml` job `publish` |
 | a required reviewer approves each publication; admins cannot bypass it | environment `npm` |
 | a published release's tag and assets cannot change | repository setting: immutable releases |
-| one publication at a time, never cancelled | `concurrency: npm-publish` |
+| one publication at a time, never cancelled; a run for the other package's tag never waits | job `publish`: `concurrency: npm-publish` |
 | actions pinned to commit SHAs | workflow files |
 
 ## One-time setup (owner)
