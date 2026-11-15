@@ -103,7 +103,7 @@ test('top-level statics resolve config from per-call options', async () => {
   expect(requests.length).toBe(6)
   for (const request of requests) {
     expect(request.apiKey).toBe(TEST_API_KEY)
-    expect(request.url).toContain(`api.${process.env.BOXFAB_DOMAIN || 'boxfab.io'}`)
+    expect(request.url).toContain(`api.${process.env.BOXFAB_DOMAIN || 'us-west.boxfab.dev'}`)
   }
 })
 

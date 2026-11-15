@@ -16,8 +16,8 @@ check='
   if (typeof m.Sandbox?.create !== "function") throw new Error("Sandbox.create missing")
   if (m.BoxFab !== m.E2B) throw new Error("E2B is not an alias of BoxFab")
   const c = new m.ConnectionConfig()
-  if (c.apiUrl !== "https://api.boxfab.io") throw new Error("apiUrl " + c.apiUrl)
-  if (c.domain !== "boxfab.io") throw new Error("domain " + c.domain)
+  if (c.apiUrl !== "https://api.us-west.boxfab.dev") throw new Error("apiUrl " + c.apiUrl)
+  if (c.domain !== "us-west.boxfab.dev") throw new Error("domain " + c.domain)
   if (c.apiKey) throw new Error("picked up an API key from E2B_API_KEY")
   if (!c.headers["User-Agent"]?.startsWith("boxfab-js-sdk/")) throw new Error("User-Agent " + c.headers["User-Agent"])
 '

@@ -227,7 +227,7 @@ describe('Volume CRUD', () => {
 
 describe('Volume BYOC domain', () => {
   const byocDomain = 'cluster.example.com'
-  const defaultDomain = process.env.BOXFAB_DOMAIN || 'boxfab.io'
+  const defaultDomain = process.env.BOXFAB_DOMAIN || 'us-west.boxfab.dev'
 
   it('uses the domain returned by create for content requests', async () => {
     server.use(

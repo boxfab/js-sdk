@@ -27,13 +27,13 @@ Requires Node.js 22.19 or newer.
 | Variable | Meaning | Default |
 |---|---|---|
 | `BOXFAB_API_KEY` | your team's API key | none |
-| `BOXFAB_DOMAIN` | the BoxFab domain | `boxfab.io` |
+| `BOXFAB_DOMAIN` | the BoxFab domain | `us-west.boxfab.dev` |
 
 Both can also be passed as options, for example `Sandbox.create({ apiKey })`. A client object
 binds its own configuration: `new BoxFab({ apiKey }).Sandbox.create()`.
 
-Documentation: [boxfab.dev/docs](https://boxfab.dev/docs). Dashboard:
-[dashboard.boxfab.io](https://dashboard.boxfab.io).
+Documentation: [boxfab.io/docs](https://boxfab.io/docs). Dashboard:
+[dashboard.us-west.boxfab.io](https://dashboard.us-west.boxfab.io).
 
 ## Code interpreting
 
@@ -68,7 +68,7 @@ the open-source E2B JavaScript SDK; [UPSTREAM.md](UPSTREAM.md) lists every chang
 as well. Set both variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 

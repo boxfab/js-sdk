@@ -98,7 +98,7 @@ class ApiClient {
   ) {
     if ((opts.requireApiKey ?? true) && !config.apiKey) {
       throw new AuthenticationError(
-        'API key is required. Get one from your BoxFab administrator or the dashboard at https://dashboard.boxfab.io. ' +
+        'API key is required. Get one from your BoxFab administrator or the dashboard at https://dashboard.us-west.boxfab.io. ' +
           'You can either set the environment variable `BOXFAB_API_KEY` ' +
           "or you can pass it directly to the sandbox like Sandbox.create({ apiKey: 'e2b_...' })"
       )

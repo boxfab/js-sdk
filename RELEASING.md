@@ -10,7 +10,7 @@ publishing (OIDC): there is no npm token in the repository or its secrets.
 |---|---|
 | tag must be `v<version in package.json>`; the tagged commit must be on `main` | `publish.yml` job `verify` + `scripts/check_release_tag.mjs` |
 | full CI on the exact tagged commit; the tarball is built and checked there once | `publish.yml` job `ci` (calls `ci.yml`) |
-| exact file list, name/version/license/entry points, no install scripts, local paths, API keys, private keys or (optional `DIST_EXTRA_DENY`) site-specific names; shipped code and declarations default to `boxfab.io` and `BOXFAB_*`; an empty project installs it, both module formats load, inherited `E2B_*` variables are ignored | `ci.yml` job `build` + `scripts/check_package.mjs` + `scripts/smoke_installed.sh` |
+| exact file list, name/version/license/entry points, no install scripts, local paths, API keys, private keys or (optional `DIST_EXTRA_DENY`) site-specific names; shipped code and declarations default to `us-west.boxfab.dev` and `BOXFAB_*`; an empty project installs it, both module formats load, inherited `E2B_*` variables are ignored | `ci.yml` job `build` + `scripts/check_package.mjs` + `scripts/smoke_installed.sh` |
 | that exact tarball is uploaded; only this job has `id-token: write`; provenance is attached | `publish.yml` job `publish` |
 | dist-tag from the version: `1.2.3` → `latest`, `-alpha.N` → `alpha`, `-beta.N` → `beta`, `-rc.N` → `rc`; any other pre-release name is rejected | `scripts/check_release_tag.mjs` (job `verify`) and `publish.yml` job `publish` |
 | a required reviewer approves each publication; admins cannot bypass it | environment `npm` |

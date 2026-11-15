@@ -54,7 +54,7 @@ for (const f of files) {
 // defaults.
 for (const f of project ? [] : ['package/dist/index.js', 'package/dist/index.mjs']) {
   const js = read(f)
-  if (!js.includes("getEnvVar(\"BOXFAB_DOMAIN\") || \"boxfab.io\"") && !js.includes("getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'")) problems.push(`${f}: default domain is not boxfab.io`)
+  if (!js.includes("getEnvVar(\"BOXFAB_DOMAIN\") || \"us-west.boxfab.dev\"") && !js.includes("getEnvVar('BOXFAB_DOMAIN') || 'us-west.boxfab.dev'")) problems.push(`${f}: default domain is not us-west.boxfab.dev`)
   for (const rx of [/getEnvVar\(["']E2B_/, /e2b\.dev\/(docs|dashboard)/, /e2b-js-sdk\//]) {
     if (rx.test(js)) problems.push(`${f}: matches ${rx}`)
   }

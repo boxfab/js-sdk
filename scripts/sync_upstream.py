@@ -26,8 +26,8 @@ UPSTREAM_TAG = "e2b@2.61.0"
 UPSTREAM_COMMIT = "ee355b765ac0e884fbeaa69e4b44f4c7c58ed6b1"
 SDK_SUBDIR = "packages/js-sdk"
 
-DOCS = "https://boxfab.dev/docs"
-DASHBOARD = "https://dashboard.boxfab.io"
+DOCS = "https://boxfab.io/docs"
+DASHBOARD = "https://dashboard.us-west.boxfab.io"
 
 COPY = ["src", "tests"]
 RENAME = {"CHANGELOG.md": "CHANGELOG-E2B.md"}
@@ -45,12 +45,13 @@ ENV_RX = r"\bE2B_(" + "|".join(ENV_VARS) + r")\b"
 
 # (file, old, new, expected count)
 EXACT = [
-    ("src/connectionConfig.ts", "return getEnvVar('BOXFAB_DOMAIN') || 'e2b.app'", "return getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'", 1),
-    ("src/volume/client.ts", "return getEnvVar('BOXFAB_DOMAIN') || 'e2b.app'", "return getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'", 1),
-    ("src/connectionConfig.ts", "@default BOXFAB_DOMAIN // environment variable or `e2b.app`", "@default BOXFAB_DOMAIN // environment variable or `boxfab.io`", 1),
-    ("src/volume/client.ts", "@default BOXFAB_DOMAIN // environment variable or `e2b.app`", "@default BOXFAB_DOMAIN // environment variable or `boxfab.io`", 1),
-    ("src/sandbox/sandboxApi.ts", "@default ${PORT}-sandboxid.e2b.app", "@default ${PORT}-sandboxid.boxfab.io", 1),
+    ("src/connectionConfig.ts", "return getEnvVar('BOXFAB_DOMAIN') || 'e2b.app'", "return getEnvVar('BOXFAB_DOMAIN') || 'us-west.boxfab.dev'", 1),
+    ("src/volume/client.ts", "return getEnvVar('BOXFAB_DOMAIN') || 'e2b.app'", "return getEnvVar('BOXFAB_DOMAIN') || 'us-west.boxfab.dev'", 1),
+    ("src/connectionConfig.ts", "@default BOXFAB_DOMAIN // environment variable or `e2b.app`", "@default BOXFAB_DOMAIN // environment variable or `us-west.boxfab.dev`", 1),
+    ("src/volume/client.ts", "@default BOXFAB_DOMAIN // environment variable or `e2b.app`", "@default BOXFAB_DOMAIN // environment variable or `us-west.boxfab.dev`", 1),
+    ("src/sandbox/sandboxApi.ts", "@default ${PORT}-sandboxid.e2b.app", "@default ${PORT}-sandboxid.us-west.boxfab.dev", 1),
     ("src/connectionConfig.ts", "sdkUserAgentPrefix = 'e2b-js-sdk/'", "sdkUserAgentPrefix = 'boxfab-js-sdk/'", 1),
+    ("src/template/logger.ts", " * import { Template, defaultBuildLogger } from 'e2b'", " * import { Template, defaultBuildLogger } from 'boxfab'", 1),
     ("src/api/metadata.ts", "publisher: 'e2b',", "publisher: 'boxfab',", 1),
     (
         "src/api/index.ts",
@@ -76,7 +77,7 @@ EXACT = [
         "export {\n  BoxFab,\n  BoxFab as E2B,\n  type BoxFabClientOpts,\n  type BoxFabClientOpts as E2BClientOpts,\n} from './client'",
         1,
     ),
-    ("tests/connectionConfig.test.ts", "assert.equal(config.apiUrl, 'https://api.e2b.app')", "assert.equal(config.apiUrl, 'https://api.boxfab.io')", 1),
+    ("tests/connectionConfig.test.ts", "assert.equal(config.apiUrl, 'https://api.e2b.app')", "assert.equal(config.apiUrl, 'https://api.us-west.boxfab.dev')", 1),
     # Tests: published-package paths instead of the monorepo's.
     ("tests/bundle/edgeCompat.test.ts", "run \\`pnpm build\\` before testing", "run \\`npm run build\\` before testing", 1),
 ]
@@ -91,7 +92,7 @@ REGEX = [
     # editor). Lines with URLs are left alone. Count asserted below as changed lines.
     ("tests/**/*.ts", r"e2b-js-sdk/", "boxfab-js-sdk/", 4),
     # Tests of the default domain follow the new default; tests of E2B's own domains stay.
-    ("tests/**/*.ts", r"\|\| 'e2b\.app'", "|| 'boxfab.io'", 3),
+    ("tests/**/*.ts", r"\|\| 'e2b\.app'", "|| 'us-west.boxfab.dev'", 3),
 ]
 
 COMMENT_LINE = re.compile(r"^\s*(\*|//|/\*\*)")

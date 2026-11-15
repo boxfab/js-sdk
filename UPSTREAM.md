@@ -26,12 +26,12 @@ fixed, asserted set of rewrites:
 | Change | Why |
 |---|---|
 | every `E2B_*` variable the SDK reads → `BOXFAB_*` (`API_KEY`, `DOMAIN`, `API_URL`, `SANDBOX_URL`, `DEBUG`, `HTTP_VERSION`, `API_CONNECTIONS`, `ENVD_RPC_CONNECTIONS`, `VOLUME_API_URL`), no fallback | a BoxFab install never picks up an E2B key or domain, nor sends a key to E2B's service |
-| default domain `e2b.app` → `boxfab.io` (API and volume clients, doc comments) | BoxFab's domain; no implicit calls to E2B's service |
+| default domain `e2b.app` → `us-west.boxfab.dev` (API and volume clients, doc comments) | BoxFab's domain; no implicit calls to E2B's service |
 | client class `E2B` → `BoxFab`, `E2BClientOpts` → `BoxFabClientOpts`; the old names stay exported as aliases | branding; existing code ports by changing the import |
 | User-Agent `boxfab-js-sdk/<ver>`, `publisher: boxfab` header | identifies the SDK to the BoxFab API |
-| missing-key error points to the BoxFab dashboard and `BOXFAB_API_KEY`; docs link `boxfab.dev/docs`; one template error names the BoxFab API | actionable messages |
+| missing-key error points to the BoxFab dashboard and `BOXFAB_API_KEY`; docs link `boxfab.io/docs`; one template error names the BoxFab API | actionable messages |
 | product name in doc comments `E2B` → `BoxFab` (31 lines, asserted; lines with URLs and three comments about E2B's own hosted service are left alone) | the declarations users read in their editor name the product they talk to |
-| tests: the same variable renames; tests of the default domain expect `boxfab.io`; `tests/boxfab-env.setup.ts` (overlay) refuses to run against an E2B domain; `tests/runtimes/` (browser, Workers, Bun, Deno smoke suites) removed | tests exercise BoxFab only |
+| tests: the same variable renames; tests of the default domain expect `us-west.boxfab.dev`; `tests/boxfab-env.setup.ts` (overlay) refuses to run against an E2B domain; `tests/runtimes/` (browser, Workers, Bun, Deno smoke suites) removed | tests exercise BoxFab only |
 
 Deliberately unchanged:
 
@@ -112,7 +112,7 @@ against `code-interpreter-v1`.
   volumes, secrets.
 - Package: `scripts/check_package.mjs` (file list, metadata, defaults in the shipped code and
   declarations) and `scripts/smoke_installed.sh` (installed into an empty project: CommonJS and ESM
-  load, `E2B` is an alias of `BoxFab`, defaults are `boxfab.io`, inherited `E2B_*` ignored, the
+  load, `E2B` is an alias of `BoxFab`, defaults are `us-west.boxfab.dev`, inherited `E2B_*` ignored, the
   missing-key message names `BOXFAB_API_KEY`).
 
 The upstream template tests leave the templates they build (`e2b-test-*`) in the test team.
