@@ -1,10 +1,10 @@
 # Changelog
 
-## Unreleased
+## 0.1.0-alpha.4 (2026-11-16)
 
-- Default domain `us-west.boxfab.dev`: BoxFab's first region. `boxfab.io` (the previous default) does not
-  serve the API, so 0.1.0-alpha.3 and older need `BOXFAB_DOMAIN=us-west.boxfab.dev`. `@boxfab/desktop` and
-  `@boxfab/code-interpreter` follow in their own releases, after this one.
+- Default domain `us-west.boxfab.dev`: BoxFab's first region. `boxfab.io` (the previous default)
+  does not serve the API, so 0.1.0-alpha.3 and older need `BOXFAB_DOMAIN=us-west.boxfab.dev`.
+  `@boxfab/desktop` and `@boxfab/code-interpreter` follow in their own releases, after this one.
 - Dashboard links point to `https://dashboard.us-west.boxfab.io`, docs links to
   `https://boxfab.io/docs`; the package homepage is `https://boxfab.io`.
 - The `defaultBuildLogger` doc example in `src/template/logger.ts` imports from `boxfab`, not `e2b`.

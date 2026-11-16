@@ -1,6 +1,6 @@
 {
   "name": "boxfab",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "BoxFab SDK: secure cloud sandboxes for AI agents and code execution",
   "homepage": "https://boxfab.io",
   "license": "MIT",
