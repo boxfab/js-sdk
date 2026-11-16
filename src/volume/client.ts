@@ -24,7 +24,7 @@ export interface VolumeApiOpts {
   /**
    * Domain to use for the volume API.
    *
-   * @default BOXFAB_DOMAIN // environment variable or `boxfab.io`
+   * @default BOXFAB_DOMAIN // environment variable or `us-west.boxfab.dev`
    */
   domain?: string
   /**
@@ -108,7 +108,7 @@ export class VolumeConnectionConfig {
   }
 
   private static get domain() {
-    return getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'
+    return getEnvVar('BOXFAB_DOMAIN') || 'us-west.boxfab.dev'
   }
 
   private static get debug() {

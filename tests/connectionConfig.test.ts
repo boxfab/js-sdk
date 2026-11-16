@@ -42,7 +42,7 @@ test('api_url defaults correctly', () => {
   delete process.env.BOXFAB_DEBUG
 
   const config = new ConnectionConfig()
-  assert.equal(config.apiUrl, 'https://api.boxfab.io')
+  assert.equal(config.apiUrl, 'https://api.us-west.boxfab.dev')
 })
 
 test('retries default to three and accept a non-negative integer', () => {

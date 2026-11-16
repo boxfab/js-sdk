@@ -66,7 +66,7 @@ export interface ConnectionOpts {
   /**
    * Domain to use for the API.
    *
-   * @default BOXFAB_DOMAIN // environment variable or `boxfab.io`
+   * @default BOXFAB_DOMAIN // environment variable or `us-west.boxfab.dev`
    */
   domain?: string
   /**
@@ -533,7 +533,7 @@ export class ConnectionConfig {
   }
 
   private static get domain() {
-    return getEnvVar('BOXFAB_DOMAIN') || 'boxfab.io'
+    return getEnvVar('BOXFAB_DOMAIN') || 'us-west.boxfab.dev'
   }
 
   private static get apiUrl() {

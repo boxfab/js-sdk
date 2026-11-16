@@ -246,7 +246,7 @@ export async function waitForHttpStatus(
  * Supports msw path parameters like :templateID
  */
 export function apiUrl(path: string): string {
-  const domain = process.env.BOXFAB_DOMAIN || 'boxfab.io'
+  const domain = process.env.BOXFAB_DOMAIN || 'us-west.boxfab.dev'
   return `https://api.${domain}${path}`
 }
 
