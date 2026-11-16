@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "desktop"
 HERE = ROOT / "scripts" / "desktop"
-DOMAIN = "boxfab.io"
+DOMAIN = "us-west.boxfab.dev"
 TEMPLATE_URL = "https://github.com/boxfab/desktop/tree/main/template"
 
 ENV_VARS = ["API_KEY", "DOMAIN", "DEBUG", "API_URL", "SANDBOX_URL"]

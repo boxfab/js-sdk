@@ -28,7 +28,7 @@ export type { BoxFabClientOpts }
  * ```ts
  * import { BoxFab } from '@boxfab/code-interpreter'
  *
- * const client = new BoxFab({ apiKey: 'e2b_...', domain: 'boxfab.io' })
+ * const client = new BoxFab({ apiKey: 'e2b_...', domain: 'us-west.boxfab.dev' })
  *
  * const sandbox = await client.Sandbox.create()
  * const execution = await sandbox.runCode('x = 1; x += 1; x')

@@ -28,7 +28,7 @@ export type { BoxFabClientOpts }
  * ```ts
  * import { BoxFab } from '@boxfab/desktop'
  *
- * const client = new BoxFab({ apiKey: 'e2b_...', domain: 'boxfab.io' })
+ * const client = new BoxFab({ apiKey: 'e2b_...', domain: 'us-west.boxfab.dev' })
  *
  * const desktop = await client.Sandbox.create()
  * await desktop.stream.start()
