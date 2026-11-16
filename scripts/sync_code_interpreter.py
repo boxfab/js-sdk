@@ -20,8 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "code-interpreter"
 HERE = ROOT / "scripts" / "code-interpreter"
-DOMAIN = "boxfab.io"
-DOCS_URL = "https://boxfab.dev/docs"
+DOMAIN = "us-west.boxfab.dev"
+DOCS_URL = "https://boxfab.io/docs"
 
 ENV_VARS = ["API_KEY", "DOMAIN", "DEBUG", "API_URL", "SANDBOX_URL", "TESTS_TEMPLATE", "INTEGRATION_TEST"]
 ENV_RX = re.compile(r"\bE2B_(" + "|".join(ENV_VARS) + r")\b")

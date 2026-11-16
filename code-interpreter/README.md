@@ -14,7 +14,7 @@ npm install @boxfab/code-interpreter
 
 ### 2. Get a BoxFab API key
 
-Get a key from the [BoxFab dashboard](https://dashboard.boxfab.io) and set it as `BOXFAB_API_KEY`.
+Get a key from the [BoxFab dashboard](https://dashboard.us-west.boxfab.io) and set it as `BOXFAB_API_KEY`.
 The SDK reads only `BOXFAB_*` variables.
 
 ### 3. Execute code with code interpreter inside Sandbox
@@ -36,7 +36,7 @@ The top-level `Sandbox` export reads its configuration from the environment vari
 ```ts
 import { BoxFab } from '@boxfab/code-interpreter'
 
-const client = new BoxFab({ apiKey: 'e2b_***', domain: 'boxfab.io' })
+const client = new BoxFab({ apiKey: 'e2b_***', domain: 'us-west.boxfab.dev' })
 
 const sbx = await client.Sandbox.create()
 const execution = await sbx.runCode('x = 1; x += 1; x')
@@ -67,7 +67,7 @@ open-source E2B Code Interpreter SDK;
 variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 
