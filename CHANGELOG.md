@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0-alpha.5 (2026-11-16)
+
+- Dependency `glob` `^14.0.3` (was `^13.0.6`), with `minimatch` 11: fixes the moderate advisories
+  GHSA-3g3m-2fjr-6pw4 (`glob`) and GHSA-g3hv-75wg-m249 (`minimatch`) that `npm audit` reports for
+  0.1.0-alpha.4 and older. The same change upstream made in `e2b` 2.63.0; no code changes.
+
 ## 0.1.0-alpha.4 (2026-11-16)
 
 - Default domain `us-west.boxfab.dev`: BoxFab's first region. `boxfab.io` (the previous default)
